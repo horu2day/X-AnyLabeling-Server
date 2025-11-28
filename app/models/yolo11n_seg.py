@@ -63,6 +63,8 @@ class YOLO11nSegmentation(BaseModel):
             "iou_threshold", self.params.get("iou_threshold", 0.70)
         )
 
+        orig_h, orig_w = image.shape[:2]
+
         results = self.model(
             image, conf=conf_threshold, iou=iou_threshold, verbose=False
         )
@@ -84,10 +86,22 @@ class YOLO11nSegmentation(BaseModel):
                     conf = float(boxes[i].conf[0])
                     label = result.names[cls]
 
+                    mask_h, mask_w = mask.shape
+                    if mask_h != orig_h or mask_w != orig_w:
+                        mask = cv2.resize(
+                            mask.astype(np.float32),
+                            (orig_w, orig_h),
+                            interpolation=cv2.INTER_LINEAR,
+                        )
+
                     points = self.mask_to_polygon(mask, epsilon_factor)
 
                     if len(points) < 3:
                         continue
+
+                    points_list = [[float(x), float(y)] for x, y in points]
+                    if points_list and points_list[0] != points_list[-1]:
+                        points_list.append(points_list[0])
 
                     if show_boxes:
                         xyxy = boxes[i].xyxy[0].cpu().numpy()
@@ -107,7 +121,7 @@ class YOLO11nSegmentation(BaseModel):
                     mask_shape = Shape(
                         label=label,
                         shape_type="polygon",
-                        points=[[float(x), float(y)] for x, y in points],
+                        points=points_list,
                         score=conf,
                     )
                     shapes.append(mask_shape)
