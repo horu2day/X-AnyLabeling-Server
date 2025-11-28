@@ -1,5 +1,6 @@
 model_id: yolo11n
 display_name: "YOLO11n Detection"
+batch_processing_mode: "default"
 
 params:
   model_path: "yolo11n.pt"

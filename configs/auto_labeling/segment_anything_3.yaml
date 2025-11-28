@@ -1,5 +1,6 @@
 model_id: segment_anything_3
 display_name: "Segment Anything 3"
+batch_processing_mode: "text_prompt"
 
 params:
   bpe_path: "bpe_simple_vocab_16e6.txt.gz"

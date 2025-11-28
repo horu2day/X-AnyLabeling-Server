@@ -1,5 +1,6 @@
 model_id: qwen3vl_caption_api
 display_name: "Qwen3-VL Caption (vLLM)"
+batch_processing_mode: "default"
 
 params:
   backend: "openai"

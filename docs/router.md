@@ -75,7 +75,8 @@ Get metadata for all loaded models.
       "params": {
         "model_path": "yolo11n.pt",
         "device": "cpu"
-      }
+      },
+      "batch_processing_mode": "default"
     },
     "yolo11n_seg": {
       "display_name": "YOLO11n Segmentation",
@@ -94,6 +95,7 @@ Get metadata for all loaded models.
 | `data[model_id].display_name` | String | Human-readable model name |
 | `data[model_id].widgets` | Array | UI widget configurations |
 | `data[model_id].params` | Object | Model parameters |
+| `data[model_id].batch_processing_mode` | String | Batch processing mode: `"default"` or `"text_prompt"` |
 
 **Example:**
 ```bash
@@ -127,7 +129,8 @@ Get detailed information about a specific model.
     "params": {
       "model_path": "yolo11n.pt",
       "device": "cpu"
-    }
+    },
+    "batch_processing_mode": "default"
   }
 }
 ```

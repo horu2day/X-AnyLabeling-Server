@@ -73,6 +73,7 @@ Create `configs/auto_labeling/your_model_id.yaml`:
 ```yaml
 model_id: your_model_id          # Required: Must be globally unique
 display_name: "Your Model Name"  # Required: Displayed in X-AnyLabeling UI
+batch_processing_mode: "default" # Optional: "default" or "text_prompt" (default: "default")
 
 params:                          # Optional: All params are passed to your model's __init__
   model_path: "path/to/weights.pt"

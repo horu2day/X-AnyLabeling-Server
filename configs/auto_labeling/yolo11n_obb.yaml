@@ -1,5 +1,6 @@
 model_id: yolo11n_obb
 display_name: "YOLO11n OBB"
+batch_processing_mode: "default"
 
 params:
   model_path: "yolo11n-obb.pt"

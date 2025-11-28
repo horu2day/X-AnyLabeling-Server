@@ -1,5 +1,6 @@
 model_id: yolo11n_track
 display_name: "YOLO11n Detection with Tracking"
+batch_processing_mode: "default"
 
 params:
   model_path: "yolo11n.pt"

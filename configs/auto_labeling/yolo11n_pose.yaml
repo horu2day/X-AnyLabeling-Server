@@ -1,5 +1,6 @@
 model_id: yolo11n_pose
 display_name: "YOLO11n Pose"
+batch_processing_mode: "default"
 
 params:
   model_path: "yolo11n-pose.pt"

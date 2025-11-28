@@ -1,5 +1,6 @@
 model_id: qwen3vl_caption_transformers
 display_name: "Qwen3-VL Caption (detailed)"
+batch_processing_mode: "default"
 
 params:
   backend: "transformers"

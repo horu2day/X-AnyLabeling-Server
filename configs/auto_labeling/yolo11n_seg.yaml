@@ -1,5 +1,6 @@
 model_id: yolo11n_seg
 display_name: "YOLO11n Segmentation"
+batch_processing_mode: "default"
 
 params:
   model_path: "yolo11n-seg.pt"

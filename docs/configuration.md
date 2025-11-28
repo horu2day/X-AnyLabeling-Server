@@ -197,6 +197,7 @@ Create `configs/auto_labeling/{model_id}.yaml` for each model with the following
 ```yaml
 model_id: your_model_id           # Required: Must match filename and be globally unique
 display_name: "Your Model Name"   # Required: Shown in X-AnyLabeling UI
+batch_processing_mode: "default"   # Optional: Batch processing mode (see table below)
 
 params:                           # Optional: All accessible via self.params in model
   model_path: "path/to/weights.pt"
@@ -228,6 +229,16 @@ widgets:                          # Optional: UI components (see table below)
 | `edit_text` | string | - | - | Text input field for prompts (requires `button_send`) |
 | `toggle_preserve_existing_annotations` | bool | - | ✅ Must provide | Checkbox to keep existing annotations |
 | `mask_fineness_slider` | int | 1-100 | ✅ Must provide | Mask detail level (for segmentation models) |
+| `add_pos_rect` | null | - | - | Button to add positive rectangle prompts (for models like SAM 3) |
+| `add_neg_rect` | null | - | - | Button to add negative rectangle prompts (for models like SAM 3) |
+| `button_run_rect` | null | - | - | Trigger inference button for rectangle-based prompts (for models like SAM 3) |
+
+**Batch Processing Mode:**
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `default` | Standard batch processing without text prompt | Models like YOLO series that don't require text input |
+| `text_prompt` | Batch processing with text prompt dialog | Models like Qwen3-VL grounding that require text prompts |
 
 > [!TIP]
 > Multiple models can share the same implementation class by using different `model_id` and `params`.
