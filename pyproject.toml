@@ -33,6 +33,7 @@ dependencies = [
     "loguru",
     "numpy",
     "pillow",
+    "zai-sdk",
 ]
 
 [project.optional-dependencies]
