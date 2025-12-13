@@ -15,6 +15,7 @@ from app.core.middleware import (
 from app.core.registry import ModelRegistry
 from app.tasks.inference import InferenceExecutor
 from app.api import health, models, predict
+from app.utils.update_checker import check_for_updates_async
 
 settings, _ = get_settings()
 setup_logging(settings.logging)
@@ -62,6 +63,8 @@ async def lifespan(app: FastAPI):
         max_workers=settings.concurrency.max_workers,
         max_queue_size=settings.concurrency.max_queue_size,
     )
+
+    check_for_updates_async()
 
     yield
 
