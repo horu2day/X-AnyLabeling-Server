@@ -88,6 +88,9 @@ ipython_config.py
 # Profiling
 *.pclprof
 
+# Compressed files
+*.gz
+
 # pyenv
 .python-version
 

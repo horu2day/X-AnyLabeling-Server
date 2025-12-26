@@ -28,16 +28,24 @@ class SegmentAnything3(BaseModel):
         bpe_path = self.params.get("bpe_path")
         model_path = self.params.get("model_path")
         device = self.params.get("device", "cuda:0")
-        self.device = "cuda" if "cuda" in device else device
 
-        logger.info(f"Loading SAM3 model from {model_path}")
+        if "cuda" in device and torch.cuda.is_available():
+            self.device = "cuda"
+        else:
+            self.device = "cpu"
+            if "cuda" in device:
+                logger.warning(
+                    f"CUDA device requested but not available, falling back to CPU"
+                )
+
+        logger.info(f"Loading SAM3 model from {model_path} on device {self.device}")
         self.model = build_sam3_image_model(
             bpe_path=bpe_path,
             device=self.device,
             checkpoint_path=model_path,
         )
 
-        if torch.cuda.is_available():
+        if self.device == "cuda" and torch.cuda.is_available():
             # turn on tfloat32 for Ampere GPUs
             # https://pytorch.org/docs/stable/notes/cuda.html#tensorfloat-32-tf32-on-ampere-devices
             torch.backends.cuda.matmul.allow_tf32 = True
@@ -239,7 +247,7 @@ class SegmentAnything3(BaseModel):
         inference_state = processor.set_image(pil_image)
 
         box_input_cxcywh = box_xywh_to_cxcywh(
-            torch.tensor(box_input_xywh).view(-1, 4)
+            torch.tensor(box_input_xywh, device=self.device).view(-1, 4)
         )
         norm_boxes_cxcywh = normalize_bbox(
             box_input_cxcywh, width, height

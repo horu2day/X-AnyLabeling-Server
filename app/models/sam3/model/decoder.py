@@ -77,7 +77,8 @@ class TransformerDecoderLayer(nn.Module):
         return tensor if pos is None else tensor + pos
 
     def forward_ffn(self, tgt):
-        with torch.amp.autocast(device_type="cuda", enabled=False):
+        device_type = "cuda" if tgt.device.type == "cuda" else "cpu"
+        with torch.amp.autocast(device_type=device_type, enabled=False):
             tgt2 = self.linear2(
                 self.dropout3(self.activation(self.linear1(tgt)))
             )
@@ -293,14 +294,6 @@ class TransformerDecoder(nn.Module):
             self.compilable_cord_cache = None
             self.compilable_stored_size = None
             self.coord_cache = {}
-
-            if resolution is not None and stride is not None:
-                feat_size = resolution // stride
-                coords_h, coords_w = self._get_coords(
-                    feat_size, feat_size, device="cuda"
-                )
-                self.compilable_cord_cache = (coords_h, coords_w)
-                self.compilable_stored_size = (feat_size, feat_size)
 
         self.roi_pooler = (
             RoIAlign(

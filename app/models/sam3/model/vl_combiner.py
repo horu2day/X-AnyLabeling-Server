@@ -151,13 +151,11 @@ class SAM3VLBackbone(nn.Module):
             # They'll be used later for output alignment
             text_to_encode += additional_text
 
-        sdpa_context = sdpa_kernel(
-            [
-                SDPBackend.MATH,
-                SDPBackend.EFFICIENT_ATTENTION,
-                SDPBackend.FLASH_ATTENTION,
-            ]
-        )
+        backends = [SDPBackend.MATH, SDPBackend.EFFICIENT_ATTENTION]
+        device_type = device if isinstance(device, str) else device.type
+        if device_type != "cpu" and torch.cuda.is_available():
+            backends.append(SDPBackend.FLASH_ATTENTION)
+        sdpa_context = sdpa_kernel(backends)
 
         with sdpa_context:
             text_attention_mask, text_memory, text_embeds = (
