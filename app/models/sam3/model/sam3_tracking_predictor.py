@@ -1471,14 +1471,24 @@ class Sam3TrackerPredictor(Sam3TrackerBase):
         if inference_state is None:
             return
 
-        min_frame = frame_idx - self.num_maskmem * self.memory_temporal_stride_for_eval
+        min_frame = (
+            frame_idx - self.num_maskmem * self.memory_temporal_stride_for_eval
+        )
         output_dict = inference_state["output_dict"]
 
-        for f in [k for k in output_dict["non_cond_frame_outputs"] if k < min_frame]:
+        for f in [
+            k for k in output_dict["non_cond_frame_outputs"] if k < min_frame
+        ]:
             output_dict["non_cond_frame_outputs"].pop(f, None)
 
-        for obj_output_dict in inference_state.get("output_dict_per_obj", {}).values():
-            for f in [k for k in obj_output_dict["non_cond_frame_outputs"] if k < min_frame]:
+        for obj_output_dict in inference_state.get(
+            "output_dict_per_obj", {}
+        ).values():
+            for f in [
+                k
+                for k in obj_output_dict["non_cond_frame_outputs"]
+                if k < min_frame
+            ]:
                 obj_output_dict["non_cond_frame_outputs"].pop(f, None)
 
     def _suppress_shrinked_masks(

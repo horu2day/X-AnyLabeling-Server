@@ -1725,9 +1725,7 @@ class Sam3VideoInferenceWithInstanceInteractivity(Sam3VideoInference):
                 frame_idx,
                 obj_id_to_mask,
             )
-            return frame_idx, self._postprocess_output(
-                inference_state, out
-            )
+            return frame_idx, self._postprocess_output(inference_state, out)
         else:
             return frame_idx, None  # no output on other GPUs
 
