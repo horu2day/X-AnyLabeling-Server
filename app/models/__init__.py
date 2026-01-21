@@ -1,6 +1,7 @@
 import numpy as np
+import re
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 
 class BaseModel(ABC):
@@ -80,3 +81,29 @@ class BaseModel(ABC):
                 "batch_processing_mode", "default"
             ),
         }
+
+
+def parse_prompts(
+    text: str, separators: List[str] = None, deduplicate: bool = True
+) -> List[str]:
+    """
+    Parses and cleans text prompts with support for multiple separators.
+
+    Args:
+        text (str): The input text to parse.
+        separators (List[str]): List of separator characters, defaults to [",", "."].
+        deduplicate (bool): Whether to remove duplicate prompts, defaults to True.
+
+    Returns:
+        List[str]: List of cleaned prompts, deduplicated if specified.
+    """
+    if separators is None:
+        separators = [",", "."]
+
+    if not text.strip():
+        return []
+
+    pattern = f"[{''.join(re.escape(s) for s in separators)}]"
+    prompts = [p.strip() for p in re.split(pattern, text) if p.strip()]
+
+    return list(dict.fromkeys(prompts)) if deduplicate else prompts

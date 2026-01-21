@@ -10,5 +10,6 @@ enabled_models:
   # - qwen3vl_caption_api
   # - segment_anything_2
   # - segment_anything_3
-  - segment_anything_3_video
+  # - segment_anything_3_video
   # - glm_4_6v_grounding_api
+  - rexomni

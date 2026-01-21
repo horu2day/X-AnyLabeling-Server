@@ -269,6 +269,7 @@ widgets:                          # Optional: UI components (see table below)
 | `add_pos_rect` | null | - | - | Button to add positive rectangle prompts (for models like SAM 3) |
 | `add_neg_rect` | null | - | - | Button to add negative rectangle prompts (for models like SAM 3) |
 | `button_run_rect` | null | - | - | Trigger inference button for rectangle-based prompts (for models like SAM 3) |
+| `remote_task_select_combobox` | null | - | - | Task selection dropdown for multi-task models (e.g., Rex-Omni) that support multiple tasks within a single model |
 
 **Batch Processing Mode:**
 
@@ -276,6 +277,35 @@ widgets:                          # Optional: UI components (see table below)
 |------|-------------|----------|
 | `default` | Standard batch processing without text prompt | Models like YOLO series that don't require text input |
 | `text_prompt` | Batch processing with text prompt dialog | Models like Qwen3-VL grounding that require text prompts |
+| `video` | Video sequence processing with session-based API | Models like Segment Anything 3 Video that support video segmentation with text or point prompts, and frame-to-frame propagation |
+
+**Multi-Task Models:**
+
+Some models support multiple tasks within a single model instance (e.g., Rex-Omni). For these models:
+
+1. **Configuration:** Add `remote_task_select_combobox` to the `widgets` list in the model configuration file.
+
+2. **Task Definition:** Tasks are defined programmatically in the model's `get_metadata()` method, which returns an `available_tasks` list. Each task can have:
+   - `id`: Unique task identifier
+   - `name`: Display name for the task
+   - `description`: Task description
+   - `batch_processing_mode`: Task-specific batch processing mode (`default`, `text_prompt`, `video`, or `None`)
+   - `active_widgets`: Dictionary of widgets that should be shown for this task
+
+3. **Example Configuration:**
+   ```yaml
+   model_id: rexomni
+   display_name: "Rex-Omni"
+   
+   widgets:
+     - name: remote_task_select_combobox
+       value: null
+   ```
+
+4. **Task-Specific Behavior:** Each task can have different:
+   - Batch processing modes
+   - Active widgets (shown/hidden based on selected task)
+   - Widget configurations (placeholders, tooltips, etc.)
 
 > [!TIP]
 > Multiple models can share the same implementation class by using different `model_id` and `params`.

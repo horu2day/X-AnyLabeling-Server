@@ -76,7 +76,8 @@ uv pip install -e .[all]
 > [!NOTE]
 > If you want to run the `sam3` service stably, make sure you are using Python 3.12 or higher, PyTorch 2.7 or higher, and a CUDA-compatible GPU with CUDA 12.6 or higher.</br>
 > For `sam2`, you can directly install the `sam3` dependencies to build it.</br>
-> For GLM and other API-based models, you can set the API key via environment variables (e.g., `ZHIPU_API_KEY`) in the terminal, or configure it in the model configuration file. Alternatively, you can deploy and integrate them using vLLM or SGLang.
+> For GLM and other API-based models, you can set the API key via environment variables (e.g., `ZHIPU_API_KEY`) in the terminal, or configure it in the model configuration file. Alternatively, you can deploy and integrate them using vLLM or SGLang.</br>
+> For `rexomni`, we recommend using the `[all]` installation mode to ensure all required dependencies are properly installed. 
 
 After installation, you can quickly start the service with the following command:
 

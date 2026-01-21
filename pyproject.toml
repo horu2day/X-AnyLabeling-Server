@@ -51,6 +51,7 @@ ultralytics = [
 transformers = [
     "transformers",
     "accelerate",
+    "qwen_vl_utils",
 ]
 
 sam3 = [
