@@ -119,6 +119,16 @@ class RexOmni(BaseModel):
                 },
             },
             {
+                "id": "keypoint_hand",
+                "name": "Keypoint (Hand)",
+                "description": "Detect hand keypoints with skeleton visualization",
+                "batch_processing_mode": "default",
+                "active_widgets": {
+                    "button_run": {},
+                    "toggle_preserve_existing_annotations": {},
+                },
+            },
+            {
                 "id": "ocr_box_word",
                 "name": "OCR Box (Word Level)",
                 "description": "Word-level text detection and recognition in boxes",
@@ -217,6 +227,8 @@ class RexOmni(BaseModel):
             return self._predict_keypoint(
                 pil_image, keypoint_type, text_prompt
             )
+        elif task == "keypoint_hand":
+            return self._predict_keypoint_hand(pil_image)
         elif task in ["ocr_box_word", "ocr_box_text_line"]:
             if task == "ocr_box_word":
                 categories = ["word"]
@@ -277,6 +289,24 @@ class RexOmni(BaseModel):
             task=self.task_type.KEYPOINT,
             categories=categories,
             keypoint_type=keypoint_type,
+        )
+
+        if not results or not results[0].get("success"):
+            return {"shapes": [], "description": ""}
+
+        result = results[0]
+        extracted = result.get("extracted_predictions", {})
+        shapes = self._convert_keypoint_to_shapes(extracted)
+
+        return {"shapes": shapes, "description": ""}
+
+    def _predict_keypoint_hand(self, image: Image.Image) -> Dict[str, Any]:
+        """Execute hand keypoint detection task."""
+        results = self.model.inference(
+            images=image,
+            task=self.task_type.KEYPOINT,
+            categories=["hand"],
+            keypoint_type="hand",
         )
 
         if not results or not results[0].get("success"):
