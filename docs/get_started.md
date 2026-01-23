@@ -102,7 +102,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ---
 
-You can test the API first to verify your deployed model is loaded correctly:
+Test the API to verify that your model is loaded correctly:
 
 ```bash
 # Check health
@@ -117,18 +117,21 @@ curl -X POST http://localhost:8000/v1/predict \
   -d '{"model": "your_model_id", "image": "data:image/png;base64,...", "params": {}}'
 ```
 
-Once the server is normal running, open the [X-AnyLabeling client](https://github.com/CVHub520/X-AnyLabeling) and follow these steps:
+Once the server is running, open the [X-AnyLabeling client](https://github.com/CVHub520/X-AnyLabeling) and follow these steps:
 
-1. Configure server connection in [`remote_server.yaml`](https://github.com/CVHub520/X-AnyLabeling/blob/main/anylabeling/configs/auto_labeling/remote_server.yaml):
-   - Set `server_url` if you changed the default address/port
-   - Set `api_key` if you enabled authentication
-2. Launch X-AnyLabeling and press `Ctrl+A` to enable AI auto-labeling
-3. Open the model dropdown, navigate to the **CVHub** provider section, and select **Remote-Server**
+1. Configure the server connection in your user configuration file (default: `~/.xanylabelingrc`):
+   ```yaml
+   remote_server_settings:
+     server_url: http://127.0.0.1:8000  # Update if using a different address or port
+     api_key: ""  # Required if authentication is enabled
+   ```
+2. Launch X-AnyLabeling and press `Ctrl+A` to enable AI auto-labeling.
+3. Open the model dropdown, navigate to the **CVHub** provider section, and select **Remote-Server**.
 
 Now, sit back and let your remote models do the labeling work for you—enjoy the magic! 🤣
 
 > [!TIP]
-> For detailed usage instructions for the client, refer to the [X-AnyLabeling User Guide](https://github.com/CVHub520/X-AnyLabeling/blob/main/docs/en/user_guide.md).
+> For detailed instructions on using the client, see the [X-AnyLabeling User Guide](https://github.com/CVHub520/X-AnyLabeling/blob/main/docs/en/user_guide.md).
 
 ## 2. Further Reading
 
