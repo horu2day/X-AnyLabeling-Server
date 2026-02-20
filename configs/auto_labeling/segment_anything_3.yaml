@@ -3,11 +3,11 @@ display_name: "Segment Anything 3"
 batch_processing_mode: "text_prompt"
 
 params:
-  bpe_path: "bpe_simple_vocab_16e6.txt.gz"
-  model_path: "sam3.pt"
+  bpe_path: "D:/MYCLAUDE_PROJECT/x-anylabeling01/X-AnyLabeling-Server/bpe_simple_vocab_16e6.txt.gz"
+  model_path: "D:/MYCLAUDE_PROJECT/x-anylabeling01/X-AnyLabeling-Server/sam3.pt"
   device: "cuda:0"  # cuda:{index} or cpu
   conf_threshold: 0.25
-  show_boxes: true
+  show_boxes: false
   show_masks: true
   epsilon_factor: 0.001
 
