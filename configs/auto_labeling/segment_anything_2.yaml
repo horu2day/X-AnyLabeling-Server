@@ -3,7 +3,7 @@ display_name: "Segment Anything 2.1"
 
 params:
   model_cfg: "sam2.1_hiera_b+"  # options: [sam2.1_hiera_l, sam2.1_hiera_s, sam2.1_hiera_t]
-  model_path: "sam2.1_hiera_base_plus.pt"
+  model_path: "D:/MYCLAUDE_PROJECT/x-anylabeling01/X-AnyLabeling-Server/sam2.1_hiera_base_plus.pt"
   device: "cuda:0"
   show_boxes: false
   show_masks: true
