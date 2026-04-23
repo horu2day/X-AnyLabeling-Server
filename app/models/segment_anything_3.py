@@ -210,29 +210,39 @@ class SegmentAnything3(BaseModel):
 
         box_input_xywh = []
         box_labels = []
+        point_input_xy = []
+        point_labels = []
 
         logger.info(
             f"Processing visual prompt: '{marks}' with conf_threshold={conf_thresh}"
         )
 
         for mark in marks:
-            if mark.get("type") != "rectangle":
-                continue
-
+            mark_type = mark.get("type")
             label = mark.get("label", 0)
             data = mark.get("data", [])
-            if len(data) != 4:
-                continue
 
-            x1, y1, x2, y2 = data
-            w = x2 - x1
-            h = y2 - y1
-            box_input_xywh.append([x1, y1, w, h])
-            box_labels.append(True if label == 1 else False)
+            if mark_type == "rectangle":
+                if len(data) != 4:
+                    continue
+                x1, y1, x2, y2 = data
+                w = x2 - x1
+                h = y2 - y1
+                box_input_xywh.append([x1, y1, w, h])
+                box_labels.append(True if label == 1 else False)
 
-        if not box_input_xywh:
-            logger.warning("No valid box prompts provided")
+            elif mark_type == "point":
+                if len(data) != 2:
+                    continue
+                point_input_xy.append(data)
+                point_labels.append(True if label == 1 else False)
+
+        if not box_input_xywh and not point_input_xy:
+            logger.warning("No valid prompts provided")
             return {"shapes": [], "description": ""}
+
+        if point_input_xy and not box_input_xywh:
+            return self._predict_with_points(image, point_input_xy, point_labels, params)
 
         for i, (box, label) in enumerate(zip(box_input_xywh, box_labels)):
             label_value = 1 if label else 0
@@ -295,6 +305,65 @@ class SegmentAnything3(BaseModel):
             inference_state, show_boxes, show_masks, epsilon_factor
         )
 
+        return {"shapes": shapes, "description": ""}
+
+    def _predict_with_points(
+        self,
+        image: np.ndarray,
+        points_xy: List[List[float]],
+        point_labels: List[bool],
+        params: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Execute segmentation with point prompts (positive/negative clicks).
+
+        Args:
+            image: Input image in BGR format.
+            points_xy: List of [x, y] pixel coordinates.
+            point_labels: True = positive, False = negative.
+            params: Inference parameters.
+
+        Returns:
+            Dictionary with shapes and description.
+        """
+        from sam3.model.sam3_image_processor import Sam3Processor
+
+        conf_thresh = params.get(
+            "conf_threshold", self.params.get("conf_threshold", 0.25)
+        )
+        show_boxes = params.get(
+            "show_boxes", self.params.get("show_boxes", False)
+        )
+        show_masks = params.get(
+            "show_masks", self.params.get("show_masks", True)
+        )
+        epsilon_factor = params.get(
+            "epsilon_factor", self.params.get("epsilon_factor", 0.001)
+        )
+
+        logger.info(
+            f"Processing {len(points_xy)} point prompt(s) with conf_threshold={conf_thresh}"
+        )
+
+        processor = Sam3Processor(
+            self.model, confidence_threshold=conf_thresh, device=self.device
+        )
+
+        pil_image = Image.fromarray(image[:, :, ::-1])
+        width, height = pil_image.size
+        inference_state = processor.set_image(pil_image)
+        processor.reset_all_prompts(inference_state)
+
+        for (x, y), label in zip(points_xy, point_labels):
+            # normalize to [0, 1]
+            norm_x = x / width
+            norm_y = y / height
+            inference_state = processor.add_point_prompt(
+                point=[norm_x, norm_y], label=label, state=inference_state
+            )
+
+        shapes = self._convert_results_to_shapes(
+            inference_state, show_boxes, show_masks, epsilon_factor
+        )
         return {"shapes": shapes, "description": ""}
 
     def _convert_results_to_shapes(
